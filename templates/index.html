@@ -2,71 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Prevent pinch-zoom issues on mobile while keeping responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Bulgaria Fog Hazard Monitor</title>
 
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <!-- Bootstrap 5 CSS CDN for robust layout utilities -->
+  <!-- Bootstrap 5 CSS CDN (used only for UI components like buttons and range sliders) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <!-- Custom Application Styles -->
   <link rel="stylesheet" href="/static/style.css" />
 </head>
-<body class="bg-dark text-light d-flex flex-column min-vh-100 m-0">
+<body>
 
   <!-- Top Navigation & Status Header -->
-  <header class="p-3 bg-secondary bg-opacity-25 border-bottom border-secondary d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <h1 class="h6 m-0 fw-bold">Bulgaria Fog Monitor</h1>
+  <header>
+    <h1>Bulgaria Fog Monitor</h1>
     <div id="status-pill" class="pill nominal">Awaiting geolocation…</div>
   </header>
 
-  <!-- Main Workspace: Responsive Map & Control Sidebar -->
-  <main class="d-flex flex-column flex-md-row flex-grow-1 w-100 m-0 p-0">
+  <!-- Main Workspace: Layout strictly controlled by style.css -->
+  <main>
     <!-- Interactive Leaflet Map Container -->
-    <div id="map" class="w-100 flex-grow-1" style="z-index: 1;"></div>
+    <div id="map"></div>
 
     <!-- Telemetry & Controls Panel -->
-    <aside id="panel" class="w-100 p-3 bg-dark d-flex flex-column gap-3 overflow-y-auto" style="z-index: 2;">
+    <aside id="panel">
       <!-- Real-Time Visibility & Air Quality Card -->
-      <section class="card bg-secondary bg-opacity-10 border-secondary p-3">
-        <h2 class="text-uppercase text-muted fs-6 mb-2">Live Visibility</h2>
+      <section class="telemetry-card">
+        <h2>Live Visibility</h2>
         <div id="vis-value" class="metric">— m</div>
         <div id="risk-label" class="risk-badge nominal">—</div>
         <div id="pm25-value" class="submetric">PM2.5 (CAMS): —</div>
       </section>
 
       <!-- Monitoring Radius Controls Card -->
-      <section class="card bg-secondary bg-opacity-10 border-secondary p-3">
-        <h2 class="text-uppercase text-muted fs-6 mb-2">Search Radius</h2>
+      <section class="telemetry-card">
+        <h2>Search Radius</h2>
         <input id="radius" class="form-range" type="range" min="1000" max="15000" step="1000" value="5000" />
-        <span id="radius-label" class="d-block mt-1">5000 m</span>
+        <span id="radius-label">5000 m</span>
         <button id="refresh-btn" class="btn btn-primary w-100 mt-2">Re-analyze location</button>
       </section>
 
       <!-- Detected Road Bridges & Overpasses List -->
-      <section class="card bg-secondary bg-opacity-10 border-secondary p-3">
-        <h2 class="text-uppercase text-muted fs-6 mb-2">Bridges (<span id="bridge-count">0</span>)</h2>
-        <ul id="bridge-list" class="list-unstyled m-0"></ul>
+      <section class="telemetry-card">
+        <h2>Bridges (<span id="bridge-count">0</span>)</h2>
+        <ul id="bridge-list"></ul>
       </section>
 
       <!-- Emergency & Institutional Alert Dispatch Card -->
-      <section class="card bg-secondary bg-opacity-10 border-secondary p-3">
-        <h2 class="text-uppercase text-muted fs-6 mb-2">Institutional Dispatch</h2>
+      <section class="telemetry-card">
+        <h2>Institutional Dispatch</h2>
         <button id="dispatch-btn" class="btn btn-danger w-100 mb-2">Dispatch Alert to All Channels</button>
-        <ul id="alert-log" class="list-unstyled m-0"></ul>
+        <ul id="alert-log"></ul>
       </section>
     </aside>
   </main>
 
   <!-- Leaflet Map Library -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Bootstrap 5 JS Bundle (includes Popper for tooltips/dropdowns) -->
+  <!-- Bootstrap 5 JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <!-- Main Application Logic -->
   <script src="/static/script.js"></script>
 </body>
