@@ -3,18 +3,22 @@
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
-  background: #0f172a; color: #e2e8f0;
+  background: #0f172a; 
+  color: #e2e8f0;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  /* Allows standard page-level vertical scrolling on mobile */
+  overflow-y: auto; 
 }
 
 header {
-  padding: 12px 16px; background: #1e293b;
-  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; 
+  background: #1e293b;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
   border-bottom: 1px solid #334155;
-  flex-wrap: wrap; gap: 8px;
-  flex-shrink: 0;
+  flex-wrap: wrap; 
+  gap: 8px;
 }
 header h1 { font-size: 1rem; font-weight: 600; }
 
@@ -28,24 +32,32 @@ header h1 { font-size: 1rem; font-weight: 600; }
 .pill.orange { background: #ea580c; color: #ffedd5; }
 .pill.red { background: #dc2626; color: #fee2e2; }
 
-/* Main Layout: Stacked vertically on mobile, side-by-side on desktop */
+/* 
+  Mobile-First Main Layout: 
+  By default (on phones), items stack vertically in a normal document flow.
+*/
 main {
   display: flex;
   flex-direction: column;
   width: 100%;
-  flex: 1;
 }
 
-/* Interactive Leaflet Map: Fixed height on mobile so it leaves room for the panel below */
+/* 
+  Interactive Leaflet Map on Mobile: 
+  Takes a fixed fluid height (70vh) so it leaves the remaining 30%+ 
+  for the panel below, without overlapping anything.
+*/
 #map {
   width: 100%;
-  height: 65vh; /* Optimized mobile viewport height allocation */
-  min-height: 320px;
-  flex-shrink: 0;
+  height: 70vh;
+  min-height: 300px;
   z-index: 1;
 }
 
-/* Telemetry & Control Panel: Natural flow underneath the map with scrolling */
+/* 
+  Sidebar Panel on Mobile: 
+  Fluid width (100%), sitting right below the map in normal page flow.
+*/
 #panel {
   width: 100%;
   background: #1e293b;
@@ -54,16 +66,21 @@ main {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  flex: 1;
   z-index: 2;
 }
 
-/* Desktop View (Tablets and Desktops: 768px and up) - Side-by-side split */
+/* 
+  Desktop & Tablet View (768px and up): 
+  Switches to side-by-side split screen with independent scrolling.
+*/
 @media (min-width: 768px) {
+  body {
+    overflow: hidden; /* Lock body scroll on desktop to keep split layout contained */
+  }
+  
   main {
     flex-direction: row;
     height: calc(100vh - 57px);
-    overflow: hidden;
   }
   
   #map {
@@ -77,7 +94,7 @@ main {
     height: 100%;
     border-top: none;
     border-left: 1px solid #334155;
-    overflow-y: auto;
+    overflow-y: auto; /* Independent scroll for sidebar on desktop */
   }
 }
 
