@@ -40,3 +40,4 @@ share/python-wheels/
 # OS generated
 .DS_Store
 Thumbs.db
+cache/

@@ -1,5 +1,11 @@
+/**
+ * @file Bulgaria Fog Hazard Monitor - Main Application Logic
+ * @description Handles Leaflet map initialization, user geolocation, real-time telemetry fetching, and hazard alert dispatching.
+ */
+
 "use strict";
 
+// Initialize Leaflet map centered over Bulgaria
 const map = L.map("map").setView([42.7, 25.5], 7);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors", maxZoom: 18,
@@ -10,11 +16,15 @@ let radiusCircle = null;
 const bridgeLayer = L.layerGroup().addTo(map);
 const segmentLayer = L.layerGroup().addTo(map);
 
+// Risk level color mapping configuration
 const RISK_COLORS = {
-  nominal: "#22c55e", yellow: "#eab308",
-  orange: "#f97316", red: "#ef4444",
+  nominal: "#22c55e", 
+  yellow: "#eab308",
+  orange: "#f97316", 
+  red: "#ef4444",
 };
 
+// DOM Element references
 const radiusInput = document.getElementById("radius");
 const radiusLabel = document.getElementById("radius-label");
 const refreshBtn = document.getElementById("refresh-btn");
@@ -30,6 +40,9 @@ const alertLog = document.getElementById("alert-log");
 let currentLat = null;
 let currentLon = null;
 
+/**
+ * Request user's geographic location and trigger hazard analysis.
+ */
 function locateUser() {
   if (!navigator.geolocation) {
     statusPill.textContent = "Geolocation not supported";
@@ -44,7 +57,8 @@ function locateUser() {
     },
     () => {
       statusPill.textContent = "Location denied — using Sofia";
-      currentLat = 42.6977; currentLon = 23.3219;
+      currentLat = 42.6977; 
+      currentLon = 23.3219;
       map.setView([currentLat, currentLon], 12);
       fetchHazards();
     },
@@ -52,6 +66,9 @@ function locateUser() {
   );
 }
 
+/**
+ * Fetch local weather, fog, and air quality telemetry based on coordinates and radius.
+ */
 async function fetchHazards() {
   if (currentLat === null) return;
   const radius = parseInt(radiusInput.value, 10);
@@ -66,10 +83,14 @@ async function fetchHazards() {
   } catch (e) {
     statusPill.textContent = "Analysis failed";
     statusPill.className = "pill red";
-    console.error(e);
+    console.error("Failed to fetch hazard data:", e);
   }
 }
 
+/**
+ * Render telemetry metrics, risk indicators, and map overlays.
+ * @param {Object} data - Hazard analysis response payload.
+ */
 function render(data) {
   const level = data.risk_level;
   statusPill.textContent = `${level.toUpperCase()} — ${data.visibility_m.toFixed(0)} m visibility`;
@@ -82,6 +103,7 @@ function render(data) {
     ? `PM2.5 (CAMS): ${data.pm2_5_ugm3.toFixed(1)} µg/m³`
     : "PM2.5: unavailable";
 
+  // Update map markers and search radius boundary
   if (userMarker) map.removeLayer(userMarker);
   if (radiusCircle) map.removeLayer(radiusCircle);
   userMarker = L.marker([data.user.lat, data.user.lon]).addTo(map);
@@ -89,6 +111,7 @@ function render(data) {
     radius: data.radius_m, color: "#38bdf8", fillOpacity: 0.05,
   }).addTo(map);
 
+  // Render road risk polylines
   segmentLayer.clearLayers();
   data.segments.forEach((seg) => {
     const color = RISK_COLORS[seg.risk_level] || "#64748b";
@@ -96,6 +119,7 @@ function render(data) {
     L.polyline(latlngs, { color, weight: 3, opacity: 0.8 }).addTo(segmentLayer);
   });
 
+  // Render bridges and overpasses
   bridgeLayer.clearLayers();
   bridgeList.innerHTML = "";
   bridgeCount.textContent = data.bridges.length;
@@ -115,6 +139,9 @@ function render(data) {
   refreshAlertLog();
 }
 
+/**
+ * Fetch and populate the institutional alert dispatch history log.
+ */
 async function refreshAlertLog() {
   try {
     const resp = await fetch("/api/alerts/log?limit=10");
@@ -128,9 +155,14 @@ async function refreshAlertLog() {
     if (data.records.length === 0) {
       alertLog.innerHTML = "<li>No alerts dispatched</li>";
     }
-  } catch (e) { console.error(e); }
+  } catch (e) { 
+    console.error("Failed to refresh alert log:", e); 
+  }
 }
 
+/**
+ * Trigger manual emergency alert dispatch to monitoring channels.
+ */
 async function dispatchAlert() {
   if (currentLat === null) return;
   try {
@@ -138,7 +170,8 @@ async function dispatchAlert() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        lat: currentLat, lon: currentLon,
+        lat: currentLat, 
+        lon: currentLon,
         radius_m: parseInt(radiusInput.value, 10),
         reason: "operator_manual",
       }),
@@ -146,13 +179,17 @@ async function dispatchAlert() {
     const data = await resp.json();
     alert(`Dispatched to ${data.dispatched} channels (${data.risk_level})`);
     refreshAlertLog();
-  } catch (e) { console.error(e); }
+  } catch (e) { 
+    console.error("Failed to dispatch alert:", e); 
+  }
 }
 
+// Event Listeners
 radiusInput.addEventListener("input", () => {
   radiusLabel.textContent = `${radiusInput.value} m`;
 });
 refreshBtn.addEventListener("click", fetchHazards);
 dispatchBtn.addEventListener("click", dispatchAlert);
 
+// Initialize application on load
 locateUser();
