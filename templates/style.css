@@ -4,7 +4,9 @@
 body {
   font-family: system-ui, -apple-system, sans-serif;
   background: #0f172a; color: #e2e8f0;
-  min-height: 100vh; display: flex; flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -12,6 +14,7 @@ header {
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 1px solid #334155;
   flex-wrap: wrap; gap: 8px;
+  flex-shrink: 0;
 }
 header h1 { font-size: 1rem; font-weight: 600; }
 
@@ -25,25 +28,24 @@ header h1 { font-size: 1rem; font-weight: 600; }
 .pill.orange { background: #ea580c; color: #ffedd5; }
 .pill.red { background: #dc2626; color: #fee2e2; }
 
-/* Main Layout: Stacked vertically on mobile, side-by-side on desktop */
+/* Main Layout: Stacked vertically on mobile, allowing natural page scrolling */
 main {
   display: flex;
   flex-direction: column;
-  flex: 1;
   width: 100%;
-  position: relative;
+  min-height: calc(100vh - 57px);
 }
 
-/* Interactive Leaflet Map: Fixed height on mobile so it leaves room for the panel below */
+/* Interactive Leaflet Map: Takes 75% of the mobile screen height */
 #map {
   width: 100%;
-  height: 55vh; /* Takes 55% of the mobile screen height */
-  min-height: 280px;
+  height: 75vh;
+  min-height: 350px;
   flex-shrink: 0;
   z-index: 1;
 }
 
-/* Telemetry & Control Panel acting as a bottom footer/drawer on mobile */
+/* Telemetry & Control Panel: Sits below the map as a scrollable section */
 #panel {
   width: 100%;
   background: #1e293b;
@@ -52,18 +54,14 @@ main {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  /* Allows smooth scrolling underneath the map */
-  overflow-y: visible;
-  flex: 1;
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
 
-/* Desktop View (Tablets and Desktops: 768px and up) */
+/* Desktop View (Tablets and Desktops: 768px and up) - Side-by-side split */
 @media (min-width: 768px) {
   main {
     flex-direction: row;
-    height: calc(100vh - 57px); /* Full height minus header */
+    height: calc(100vh - 57px);
     overflow: hidden;
   }
   
@@ -79,7 +77,6 @@ main {
     border-top: none;
     border-left: 1px solid #334155;
     overflow-y: auto;
-    box-shadow: none;
   }
 }
 
@@ -100,7 +97,7 @@ main {
   border-radius: 4px; font-size: 0.7rem; font-weight: 700;
   text-transform: uppercase;
 }
-.risk-badge.nominal { background: #166534; color: #dcfce7; }
+.risk-badge.nominal {background: #166534; color: #dcfce7; }
 .risk-badge.yellow { background: #ca8a04; color: #fef9c3; }
 .risk-badge.orange { background: #ea580c; color: #ffedd5; }
 .risk-badge.red { background: #dc2626; color: #fee2e2; }
@@ -115,7 +112,7 @@ button {
   width: 100%; padding: 12px; background: #2563eb;
   color: #fff; border: none; border-radius: 6px;
   font-weight: 600; font-size: 0.9rem; cursor: pointer;
-  min-height: 44px; /* Finger-friendly touch target height */
+  min-height: 44px;
 }
 button:hover { background: #1d4ed8; }
 button:active { background: #1e40af; }
