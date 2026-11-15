@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bulgaria Fog Hazard Monitor</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Bulgaria Fog Hazard Monitor</h1>
+    <div id="status-pill" class="pill nominal">Awaiting geolocation…</div>
+  </header>
+
+  <main>
+    <div id="map"></div>
+    <aside id="panel">
+      <section class="card">
+        <h2>Live Visibility</h2>
+        <div id="vis-value" class="metric">— m</div>
+        <div id="risk-label" class="risk-badge nominal">—</div>
+        <div id="pm25-value" class="submetric">PM2.5 (CAMS): —</div>
+      </section>
+
+      <section class="card">
+        <h2>Search Radius</h2>
+        <input id="radius" type="range" min="1000" max="15000" step="1000" value="5000" />
+        <span id="radius-label">5000 m</span>
+        <button id="refresh-btn">Re-analyze location</button>
+      </section>
+
+      <section class="card">
+        <h2>Bridges (<span id="bridge-count">0</span>)</h2>
+        <ul id="bridge-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Institutional Dispatch</h2>
+        <button id="dispatch-btn" class="danger">Dispatch Alert to All Channels</button>
+        <ul id="alert-log"></ul>
+      </section>
+    </aside>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/script.js"></script>
+</body>
+</html>
