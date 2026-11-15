@@ -3,32 +3,71 @@
 body {
   font-family: system-ui, -apple-system, sans-serif;
   background: #0f172a; color: #e2e8f0;
-  height: 100vh; display: flex; flex-direction: column;
+  min-height: 100vh; display: flex; flex-direction: column;
 }
 
 header {
-  padding: 12px 20px; background: #1e293b;
+  padding: 12px 16px; background: #1e293b;
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 1px solid #334155;
+  flex-wrap: wrap; gap: 8px;
 }
-header h1 { font-size: 1.1rem; font-weight: 600; }
+header h1 { font-size: 1rem; font-weight: 600; }
 
 .pill {
-  padding: 6px 14px; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  padding: 6px 12px; border-radius: 20px;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  text-align: center;
 }
 .pill.nominal { background: #166534; color: #dcfce7; }
 .pill.yellow { background: #ca8a04; color: #fef9c3; }
 .pill.orange { background: #ea580c; color: #ffedd5; }
 .pill.red { background: #dc2626; color: #fee2e2; }
 
-main { display: flex; flex: 1; overflow: hidden; }
-#map { flex: 1; }
+/* Responsive Main Layout: Column on mobile, Row on Desktop */
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 320px; /* Fixed height for mobile devices */
+  flex-shrink: 0;
+  z-index: 1;
+}
 
 #panel {
-  width: 360px; background: #1e293b;
-  border-left: 1px solid #334155; padding: 16px;
-  overflow-y: auto; display: flex; flex-direction: column; gap: 14px;
+  width: 100%;
+  background: #1e293b;
+  border-top: 1px solid #334155;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: visible;
+}
+
+/* Desktop view (from tablet and up) */
+@media (min-width: 768px) {
+  main {
+    flex-direction: row;
+    height: calc(100vh - 57px); /* Full height minus header */
+    overflow: hidden;
+  }
+  #map {
+    height: 100%;
+    flex: 1;
+  }
+  #panel {
+    width: 380px;
+    height: 100%;
+    border-top: none;
+    border-left: 1px solid #334155;
+    overflow-y: auto;
+  }
 }
 
 .card {
@@ -36,16 +75,16 @@ main { display: flex; flex: 1; overflow: hidden; }
   border-radius: 8px; padding: 12px;
 }
 .card h2 {
-  font-size: 0.8rem; text-transform: uppercase;
+  font-size: 0.75rem; text-transform: uppercase;
   letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 8px;
 }
 
-.metric { font-size: 2rem; font-weight: 700; color: #38bdf8; }
-.submetric { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
+.metric { font-size: 1.8rem; font-weight: 700; color: #38bdf8; }
+.submetric { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
 
 .risk-badge {
   display: inline-block; margin-top: 6px; padding: 4px 10px;
-  border-radius: 4px; font-size: 0.75rem; font-weight: 700;
+  border-radius: 4px; font-size: 0.7rem; font-weight: 700;
   text-transform: uppercase;
 }
 .risk-badge.nominal { background: #166534; color: #dcfce7; }
@@ -53,25 +92,28 @@ main { display: flex; flex: 1; overflow: hidden; }
 .risk-badge.orange { background: #ea580c; color: #ffedd5; }
 .risk-badge.red { background: #dc2626; color: #fee2e2; }
 
-input[type="range"] { width: 100%; margin-bottom: 4px; }
+input[type="range"] { width: 100%; margin-bottom: 6px; height: 6px; cursor: pointer; }
 #radius-label {
   font-size: 0.75rem; color: #38bdf8;
   display: block; margin-bottom: 10px;
 }
 
 button {
-  width: 100%; padding: 10px; background: #2563eb;
+  width: 100%; padding: 12px; background: #2563eb;
   color: #fff; border: none; border-radius: 6px;
-  font-weight: 600; cursor: pointer;
+  font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  min-height: 44px; /* Finger-friendly touch target height */
 }
 button:hover { background: #1d4ed8; }
+button:active { background: #1e40af; }
+
 button.danger { background: #dc2626; margin-bottom: 8px; }
 button.danger:hover { background: #b91c1c; }
 
-ul { list-style: none; font-size: 0.8rem; max-height: 160px; overflow-y: auto; }
+ul { list-style: none; font-size: 0.8rem; max-height: 140px; overflow-y: auto; }
 li {
   padding: 6px 0; border-bottom: 1px solid #1e293b;
-  display: flex; justify-content: space-between;
+  display: flex; justify-content: space-between; align-items: center;
 }
 li:last-child { border-bottom: none; }
 

@@ -2,20 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Prevent pinch-zoom issues on mobile while keeping responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Bulgaria Fog Hazard Monitor</title>
+
+  <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Custom Application Styles -->
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
+  <!-- Top Navigation & Status Header -->
   <header>
-    <h1>Bulgaria Fog Hazard Monitor</h1>
+    <h1>Bulgaria Fog Monitor</h1>
     <div id="status-pill" class="pill nominal">Awaiting geolocation…</div>
   </header>
 
+  <!-- Main Workspace: Responsive Map & Control Sidebar -->
   <main>
+    <!-- Interactive Leaflet Map Container -->
     <div id="map"></div>
+
+    <!-- Telemetry & Controls Panel -->
     <aside id="panel">
+      <!-- Real-Time Visibility & Air Quality Card -->
       <section class="card">
         <h2>Live Visibility</h2>
         <div id="vis-value" class="metric">— m</div>
@@ -23,6 +33,7 @@
         <div id="pm25-value" class="submetric">PM2.5 (CAMS): —</div>
       </section>
 
+      <!-- Monitoring Radius Controls Card -->
       <section class="card">
         <h2>Search Radius</h2>
         <input id="radius" type="range" min="1000" max="15000" step="1000" value="5000" />
@@ -30,11 +41,13 @@
         <button id="refresh-btn">Re-analyze location</button>
       </section>
 
+      <!-- Detected Road Bridges & Overpasses List -->
       <section class="card">
         <h2>Bridges (<span id="bridge-count">0</span>)</h2>
         <ul id="bridge-list"></ul>
       </section>
 
+      <!-- Emergency & Institutional Alert Dispatch Card -->
       <section class="card">
         <h2>Institutional Dispatch</h2>
         <button id="dispatch-btn" class="danger">Dispatch Alert to All Channels</button>
@@ -43,7 +56,9 @@
     </aside>
   </main>
 
+  <!-- Leaflet Map Library -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Main Application Logic -->
   <script src="/static/script.js"></script>
 </body>
 </html>
