@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Prevent pinch-zoom issues on mobile while keeping responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Bulgaria Fog Hazard Monitor</title>
+  <title>Bulgaria Fog Hazard & Impact Monitor</title>
 
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,47 +15,178 @@
 
   <!-- Top Navigation & Status Header -->
   <header>
-    <h1>Bulgaria Fog Monitor</h1>
-    <div id="status-pill" class="pill nominal">Awaiting geolocation…</div>
+    <div class="header-left">
+      <h1>Bulgaria Fog Monitor</h1>
+      <div id="status-pill" class="pill nominal">Awaiting geolocation…</div>
+    </div>
+    <div class="header-right">
+      <div class="live-indicator-wrapper" title="System Live Status">
+        <span class="live-dot"></span>
+        <span class="live-text">live</span>
+      </div>
+      <button id="operator-key-btn" class="btn-secondary-sm">Operator Key</button>
+    </div>
   </header>
 
-  <!-- Main Workspace: Layout strictly controlled by style.css -->
+  <!-- Main Workspace -->
   <main>
     <!-- Interactive Leaflet Map Container -->
     <div id="map"></div>
 
-    <!-- Telemetry & Controls Panel -->
+    <!-- Dynamic Sidebar Panel with Tabs -->
     <aside id="panel">
-      <!-- Real-Time Visibility & Air Quality Card -->
-      <section class="telemetry-card">
-        <h2>Live Visibility</h2>
-        <div id="vis-value" class="metric">— m</div>
-        <div id="risk-label" class="risk-badge nominal">—</div>
-        <div id="pm25-value" class="submetric">PM2.5 (CAMS): —</div>
+      <!-- Navigation Tabs -->
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="tab-situation">Situation</button>
+        <button class="tab-btn" data-tab="tab-incidents">Incidents</button>
+        <button class="tab-btn" data-tab="tab-sources">Sources</button>
+        <button class="tab-btn" data-tab="tab-log">Log</button>
+      </nav>
+
+      <!-- TAB 1: SITUATION & SCENARIOS -->
+      <section id="tab-situation" class="tab-content active">
+        <div class="telemetry-card">
+          <h2>Scenario & Multi-Hazard Selector</h2>
+          <p class="submetric mb-2">Compare baseline risk vs. active model mitigation.</p>
+          <div class="scenario-buttons">
+            <button id="load-s1-fog" class="btn-scenario">Load S1: Hemus Heavy Fog (Chain Collision)</button>
+            <button id="load-s2-fog" class="btn-scenario">Load S2: Trakia Bridge Zero-Visibility</button>
+          </div>
+        </div>
+
+        <div class="telemetry-card">
+          <h2>Live Telemetry & Impact</h2>
+          <div id="vis-value" class="metric">— m</div>
+          <div id="risk-label" class="risk-badge nominal">—</div>
+          <div id="pm25-value" class="submetric">PM2.5 (CAMS): —</div>
+          
+          <div class="impact-stats mt-3">
+            <div class="stat-row"><span>Confirmed closures:</span> <strong id="stat-closures">0</strong></div>
+            <div class="stat-row"><span>Reported incidents:</span> <strong id="stat-reported">0</strong></div>
+            <div class="stat-row"><span>Suspected risk zones:</span> <strong id="stat-suspected">0</strong></div>
+            <div class="stat-row"><span>People cut off from hospitals:</span> <strong id="stat-isolated-people">0</strong></div>
+            <div class="stat-row"><span>Isolation person-hours:</span> <strong id="stat-isolation-hours">0</strong></div>
+            <div class="stat-row"><span>Detour person-hours lost:</span> <strong id="stat-detour-hours">–</strong></div>
+            <div class="stat-row"><span>Lost 30-minute hospital access:</span> <strong id="stat-lost-access">0</strong></div>
+          </div>
+        </div>
+
+        <div class="telemetry-card">
+          <h2>Proposed Response (Rule-Based Checklist)</h2>
+          <p id="response-checklist" class="submetric">No action needed: no active incidents.</p>
+        </div>
+
+        <div class="telemetry-card">
+          <h2>Rule-Based Analyst (Deterministic)</h2>
+          <p class="submetric">Explains deterministic tool outputs (C1–C5, service tiers, and evidence IDs) without inventing figures.</p>
+          <div id="analyst-brief" class="analyst-box">Select S1 or S2 above to view the rule-based analyst brief and avoided economic cost projections.</div>
+        </div>
+
+        <div class="telemetry-card">
+          <h2>Search Radius & Controls</h2>
+          <input id="radius" type="range" min="1000" max="15000" step="1000" value="5000" />
+          <span id="radius-label">5000 m</span>
+          <button id="refresh-btn">Re-analyze location</button>
+        </div>
+
+        <div class="telemetry-card">
+          <h2>Bridges (<span id="bridge-count">0</span>)</h2>
+          <ul id="bridge-list"></ul>
+        </div>
+
+        <div class="telemetry-card">
+          <h2>Institutional Dispatch</h2>
+          <button id="dispatch-btn" class="danger">Dispatch Alert to All Channels</button>
+        </div>
       </section>
 
-      <!-- Monitoring Radius Controls Card -->
-      <section class="telemetry-card">
-        <h2>Search Radius</h2>
-        <input id="radius" type="range" min="1000" max="15000" step="1000" value="5000" />
-        <span id="radius-label">5000 m</span>
-        <button id="refresh-btn">Re-analyze location</button>
+      <!-- TAB 2: INCIDENTS -->
+      <section id="tab-incidents" class="tab-content">
+        <div class="telemetry-card">
+          <h2>Active & Historical Incidents</h2>
+          <div id="incidents-container">
+            <p class="submetric">No open incidents.</p>
+          </div>
+          <p class="submetric mt-3">Operators: set the operator key (top right) to confirm, report or reopen crossings.</p>
+        </div>
       </section>
 
-      <!-- Detected Road Bridges & Overpasses List -->
-      <section class="telemetry-card">
-        <h2>Bridges (<span id="bridge-count">0</span>)</h2>
-        <ul id="bridge-list"></ul>
+      <!-- TAB 3: SOURCES -->
+      <section id="tab-sources" class="tab-content">
+        <div class="telemetry-card">
+          <h2>Data Sources & Feeds</h2>
+          <div class="source-table-wrapper">
+            <table class="source-table">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Status</th>
+                  <th>Last success</th>
+                  <th>Signals</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Road agency (DATEX II)</td>
+                  <td><span class="badge-error">error</span></td>
+                  <td>never</td>
+                  <td>0 (0 on crossings)</td>
+                </tr>
+                <tr>
+                  <td>Meteoalarm (Visibility)</td>
+                  <td><span class="badge-ok">ok</span></td>
+                  <td>2 min ago</td>
+                  <td>0 (0 on crossings)</td>
+                </tr>
+                <tr>
+                  <td>Copernicus CAMS</td>
+                  <td><span class="badge-ok">ok</span></td>
+                  <td>21 min ago</td>
+                  <td>0 (0 on crossings)</td>
+                </tr>
+                <tr>
+                  <td>Open-Meteo Fog Engine</td>
+                  <td><span class="badge-ok">ok</span></td>
+                  <td>2 min ago</td>
+                  <td>2 (2 on crossings)</td>
+                </tr>
+                <tr>
+                  <td>Flood extent (GFM / CEMS)</td>
+                  <td><span class="badge-off">not configured</span></td>
+                  <td>never</td>
+                  <td>0 (0 on crossings)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="submetric mt-2">Set FOG_MODEL_ENDPOINT or CAMS parameters to adjust model weights.</p>
+          <p class="submetric mt-2">Database: postgresql+asyncpg ok. Service started 18 Nov at 18:10. Snapshot v15. Raw payloads are stored on change: /v1/raw.</p>
+        </div>
       </section>
 
-      <!-- Emergency & Institutional Alert Dispatch Card -->
-      <section class="telemetry-card">
-        <h2>Institutional Dispatch</h2>
-        <button id="dispatch-btn" class="danger">Dispatch Alert to All Channels</button>
-        <ul id="alert-log"></ul>
+      <!-- TAB 4: LOG -->
+      <section id="tab-log" class="tab-content">
+        <div class="telemetry-card">
+          <h2>System State & Audit Log</h2>
+          <ul id="alert-log">
+            <li>No status changes yet.</li>
+          </ul>
+        </div>
       </section>
     </aside>
   </main>
+
+  <!-- Operator Key Modal Dialog -->
+  <dialog id="operator-modal" class="operator-dialog">
+    <form method="dialog" id="operator-form">
+      <p class="dialog-instruction">Operator key (kept only in this browser tab). Leave empty to sign out.</p>
+      <input type="password" id="operator-key-input" placeholder="Enter operator key..." autocomplete="off" />
+      <div class="dialog-actions">
+        <button type="button" id="dialog-cancel" class="btn-dialog-cancel">Cancel</button>
+        <button type="submit" id="dialog-ok" class="btn-dialog-ok">OK</button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Leaflet Map Library -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

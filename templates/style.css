@@ -19,7 +19,40 @@ header {
   flex-wrap: wrap; 
   gap: 8px;
 }
+.header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.header-right { display: flex; align-items: center; gap: 12px; }
 header h1 { font-size: 1rem; font-weight: 600; margin: 0; }
+
+/* Live Indicator Badge */
+.live-indicator-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #22c55e;
+  animation: pulse-live 2s infinite;
+}
+@keyframes pulse-live {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 10px #22c55e; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+.live-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #22c55e;
+  letter-spacing: 0.05em;
+}
 
 .pill {
   padding: 6px 12px; border-radius: 20px;
@@ -31,34 +64,72 @@ header h1 { font-size: 1rem; font-weight: 600; margin: 0; }
 .pill.orange { background: #ea580c; color: #ffedd5; }
 .pill.red { background: #dc2626; color: #fee2e2; }
 
-/* Mobile-First Layout: Standard vertical block stacking */
+/* Layout */
 main {
   display: block;
   width: 100%;
 }
 
-/* Interactive Leaflet Map: Takes 75% of viewport height on mobile */
 #map {
   display: block;
   width: 100%;
-  height: 75vh;
+  height: 65vh;
   min-height: 350px;
   z-index: 1;
 }
 
-/* Sidebar Panel on Mobile: Sits directly below the map in natural flow */
 #panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   width: 100%;
   background: #1e293b;
   border-top: 2px solid #334155;
-  padding: 16px;
   z-index: 2;
 }
 
-/* Desktop & Tablet View (768px and up): Side-by-side split screen */
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  background: #0f172a;
+  border-bottom: 1px solid #334155;
+  overflow-x: auto;
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  min-height: auto;
+  border-radius: 0;
+}
+.tab-btn:hover {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.tab-btn.active {
+  color: #38bdf8;
+  border-bottom: 2px solid #38bdf8;
+  background: #1e293b;
+}
+
+.tab-content {
+  display: none;
+  padding: 16px;
+  flex-direction: column;
+  gap: 12px;
+}
+.tab-content.active {
+  display: flex;
+}
+
+/* Desktop & Tablet Split Screen */
 @media (min-width: 768px) {
   body {
     overflow: hidden;
@@ -77,7 +148,7 @@ main {
   }
   
   #panel {
-    width: 380px;
+    width: 420px;
     height: 100%;
     border-top: none;
     border-left: 1px solid #334155;
@@ -85,7 +156,7 @@ main {
   }
 }
 
-/* Custom Telemetry Card (renamed from .card to prevent Bootstrap collision) */
+/* Telemetry Cards & Impact stats */
 .telemetry-card {
   background: #0f172a; 
   border: 1px solid #334155;
@@ -103,20 +174,183 @@ main {
 .metric { font-size: 1.8rem; font-weight: 700; color: #38bdf8; }
 .submetric { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
 
-.risk-badge {
-  display: inline-block; margin-top: 6px; padding: 4px 10px;
-  border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+.impact-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+.stat-row strong {
+  color: #38bdf8;
+}
+
+.scenario-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.btn-scenario {
+  width: 100%;
+  padding: 10px;
+  background: #334155;
+  color: #fff;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.btn-scenario:hover { background: #475569; }
+
+.analyst-box {
+  background: #1e293b;
+  border-left: 3px solid #38bdf8;
+  padding: 10px;
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  border-radius: 0 6px 6px 0;
+  margin-top: 6px;
+}
+
+/* Source Table */
+.source-table-wrapper {
+  overflow-x: auto;
+}
+.source-table {
+  width: 100%;
+  font-size: 0.75rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+.source-table th, .source-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #334155;
+}
+.source-table th {
+  color: #94a3b8;
   text-transform: uppercase;
 }
-.risk-badge.nominal { background: #166534; color: #dcfce7; }
-.risk-badge.yellow { background: #ca8a04; color: #fef9c3; }
-.risk-badge.orange { background: #ea580c; color: #ffedd5; }
-.risk-badge.red { background: #dc2626; color: #fee2e2; }
+.badge-ok { color: #22c55e; font-weight: 700; }
+.badge-error { color: #ef4444; font-weight: 700; }
+.badge-off { color: #f59e0b; font-weight: 700; }
+
+/* Operator Key Modal Styles */
+.operator-dialog {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 20px;
+  width: 340px;
+  max-width: 90vw;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+.operator-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(2px);
+}
+.dialog-instruction {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.operator-dialog input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  outline: none;
+}
+.operator-dialog input[type="password"]:focus {
+  border-color: #38bdf8;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.btn-dialog-cancel, .btn-dialog-ok {
+  background: transparent;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  min-height: auto;
+  width: auto;
+}
+.btn-dialog-cancel {
+  color: #94a3b8;
+}
+.btn-dialog-cancel:hover {
+  background: #334155;
+  color: #fff;
+}
+.btn-dialog-ok {
+  color: #38bdf8;
+}
+.btn-dialog-ok:hover {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+input[type="range"] { 
+  width: 100%; 
+  margin-bottom: 6px; 
+  height: 6px; 
+  cursor: pointer; 
+}
 
 #radius-label {
   font-size: 0.75rem; color: #38bdf8;
   display: block; margin-bottom: 10px;
 }
+
+button {
+  width: 100%; 
+  padding: 12px; 
+  background: #2563eb;
+  color: #fff; 
+  border: none; 
+  border-radius: 6px;
+  font-weight: 600; 
+  font-size: 0.9rem; 
+  cursor: pointer;
+  min-height: 40px;
+  margin-top: 4px;
+}
+button:hover { background: #1d4ed8; }
+button:active { background: #1e40af; }
+
+.btn-secondary-sm {
+  width: auto;
+  padding: 6px 12px;
+  background: #334155;
+  font-size: 0.75rem;
+  margin-top: 0;
+}
+.btn-secondary-sm:hover { background: #475569; }
+
+button.danger { 
+  background: #dc2626; 
+}
+button.danger:hover { background: #b91c1c; }
 
 ul { list-style: none; font-size: 0.8rem; max-height: 140px; overflow-y: auto; padding-left: 0; margin-bottom: 0; }
 li {
